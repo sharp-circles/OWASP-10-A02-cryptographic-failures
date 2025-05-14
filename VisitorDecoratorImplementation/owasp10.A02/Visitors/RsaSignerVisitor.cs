@@ -17,7 +17,6 @@ namespace owasp10.A02.Visitors
 
         private static readonly BigInteger KeyExponent = new(1, Hex.DecodeStrict("00010001"));
 
-
         public ISignee VisitForSignature(ISignable target)
         {
             var key = GenerateRSAKeyPair(KeyExponent, KeySize);
@@ -52,7 +51,7 @@ namespace owasp10.A02.Visitors
             return VerifyRSASignature(publicKey, Convert.FromBase64String(base64EncodedSignature), objectBytes);
         }
 
-        public static AsymmetricKeyPair<AsymmetricRsaPublicKey, AsymmetricRsaPrivateKey> GenerateRSAKeyPair(BigInteger e, int keySize)
+        private static AsymmetricKeyPair<AsymmetricRsaPublicKey, AsymmetricRsaPrivateKey> GenerateRSAKeyPair(BigInteger e, int keySize)
         {
             FipsRsa.KeyGenerationParameters keyGenParameters = new FipsRsa.KeyGenerationParameters(e, keySize);
 
@@ -61,7 +60,7 @@ namespace owasp10.A02.Visitors
             return kpGen.GenerateKeyPair();
         }
 
-        public static byte[] GenerateRSASignature(AsymmetricRsaPrivateKey key, byte[] message)
+        private static byte[] GenerateRSASignature(AsymmetricRsaPrivateKey key, byte[] message)
         {
             ISignatureFactoryService signatureFactoryProvider = CryptoServicesRegistrar.CreateService(key, new SecureRandom());
 
@@ -76,7 +75,7 @@ namespace owasp10.A02.Visitors
             return calculator.GetResult().Collect();
         }
 
-        public static bool VerifyRSASignature(AsymmetricRsaPublicKey key, byte[] signature, byte[] message)
+        private static bool VerifyRSASignature(AsymmetricRsaPublicKey key, byte[] signature, byte[] message)
         {
             IVerifierFactoryService verifierFactoryProvider = CryptoServicesRegistrar.CreateService(key);
 
